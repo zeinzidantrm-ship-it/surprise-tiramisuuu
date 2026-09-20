@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A Little Surprise</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-dark:#1a0000;
+    --bg-mid:#4a0300;
+    --bg-red:#8c0f0f;
+    --bg-bright:#c81e2e;
+    --card:#fdf8f2;
+    --card-line:#3a2a2a;
+    --gold:#d8b26a;
+    --rose:#b3182f;
+    --green-btn:#3ecf7e;
+    --text-cream:#f7ece2;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  html,body{
+    height:100%;
+    margin:0;
+    background:var(--bg-dark);
+    overflow:hidden;
+    font-family:'Poppins',sans-serif;
+  }
+  #stage{
+    position:relative;
+    width:100%;
+    height:100vh;
+    height:100dvh;
+    background:
+      radial-gradient(ellipse at 15% 50%, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0) 55%),
+      linear-gradient(120deg, var(--bg-dark) 0%, var(--bg-mid) 35%, var(--bg-red) 65%, var(--bg-bright) 100%);
+    overflow:hidden;
+  }
+
+  /* ---------- floating hearts & petals ---------- */
+  .fx{
+    position:absolute;
+    top:-10%;
+    pointer-events:none;
+    user-select:none;
+    opacity:.85;
+    will-change:transform;
+    animation-name:drift;
+    animation-timing-function:linear;
+    animation-iteration-count:infinite;
+    filter:drop-shadow(0 0 6px rgba(255,120,140,.35));
+  }
+  @keyframes drift{
+    0%{ transform:translateY(-10vh) translateX(0) rotate(0deg); opacity:0; }
+    8%{ opacity:.9; }
+    92%{ opacity:.85; }
+    100%{ transform:translateY(110vh) translateX(var(--drift-x,40px)) rotate(360deg); opacity:0; }
+  }
+
+  /* ---------- section management ---------- */
+  .page{
+    position:absolute;
+    inset:0;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    opacity:0;
+    transition:opacity .6s ease;
+    text-align:center;
+  }
+  .page.active{
+    display:flex;
+    opacity:1;
+  }
+
+  /* ---------- PAGE 1 : landing ---------- */
+  .envelope-wrap{
+    cursor:pointer;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:22px;
+    animation:pulseSoft 3.2s ease-in-out infinite;
+  }
+  @keyframes pulseSoft{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.035); }
+  }
+  .envelope{
+    width:min(64vw,260px);
+    aspect-ratio:1.45/1;
+    position:relative;
+  }
+  .envelope-body{
+    position:absolute; inset:0;
+    background:linear-gradient(160deg,#e9c9a0,#c8985f);
+    border-radius:8px;
+    box-shadow:0 18px 40px rgba(0,0,0,.55);
+  }
+  .envelope-flap{
+    position:absolute;
+    top:0; left:0; right:0;
+    height:0; width:0;
+    border-left:calc(min(64vw,260px)/2) solid transparent;
+    border-right:calc(min(64vw,260px)/2) solid transparent;
+    border-top:calc(min(64vw,260px)/2.6) solid #dab27f;
+    filter:brightness(1.05);
+  }
+  .wax-seal{
+    position:absolute;
+    left:50%; top:62%;
+    transform:translate(-50%,-50%);
+    width:46px; height:46px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #e0435a, var(--rose) 70%);
+    box-shadow:0 4px 10px rgba(0,0,0,.5);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff5e8;
+    font-size:20px;
+  }
+  h1.title{
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    color:var(--text-cream);
+    font-size:clamp(20px,5vw,30px);
+    letter-spacing:.5px;
+    margin:0;
+    text-shadow:0 2px 12px rgba(0,0,0,.5);
+  }
+  .tap-text{
+    font-family:'Poppins',sans-serif;
+    letter-spacing:3px;
+    font-size:13px;
+    color:var(--text-cream);
+    text-decoration:underline;
+    text-underline-offset:6px;
+    opacity:.9;
+  }
+
+  /* ---------- PAGE 2 : choose ---------- */
+  .choose-title{
+    font-family:'Dancing Script',cursive;
+    font-size:clamp(34px,8vw,58px);
+    color:var(--text-cream);
+    margin:0 0 44px 0;
+    text-shadow:0 2px 20px rgba(0,0,0,.5);
+  }
+  .menu-option{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+    cursor:pointer;
+    color:var(--text-cream);
+    padding:18px 34px;
+    border-radius:16px;
+    transition:transform .25s ease, background .25s ease;
+  }
+  .menu-option:hover{
+    transform:translateY(-6px);
+    background:rgba(255,255,255,.06);
+  }
+  .menu-icon{
+    font-size:44px;
+    filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));
+  }
+  .menu-label{
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    font-size:16px;
+    border-bottom:1px solid rgba(247,236,226,.6);
+    padding-bottom:3px;
+  }
+
+  /* ---------- PAGE 3 : journey ---------- */
+  #page3{
+    justify-content:flex-start;
+    padding-top:calc(90px + env(safe-area-inset-top,0px));
+    overflow-y:auto;
+  }
+  .back-btn{
+    position:fixed;
+    top:calc(18px + env(safe-area-inset-top,0px));
+    right:18px;
+    background:var(--green-btn);
+    color:#05321a;
+    font-weight:600;
+    font-family:'Poppins',sans-serif;
+    font-size:13px;
+    border:none;
+    border-radius:999px;
+    padding:10px 20px;
+    cursor:pointer;
+    box-shadow:0 6px 16px rgba(0,0,0,.35);
+    z-index:20;
+  }
+  .name-script{
+    font-family:'Dancing Script',cursive;
+    color:var(--text-cream);
+    font-size:clamp(30px,7vw,46px);
+    margin:0 0 6px 0;
+  }
+  .subhead{
+    color:var(--text-cream);
+    opacity:.85;
+    font-size:13px;
+    letter-spacing:2px;
+    margin-bottom:36px;
+    text-transform:uppercase;
+  }
+  .timeline{
+    position:relative;
+    width:100%;
+    max-width:560px;
+    margin:0 auto 60px auto;
+    padding-left:26px;
+  }
+  .timeline::before{
+    content:"";
+    position:absolute;
+    left:6px; top:6px; bottom:6px;
+    width:2px;
+    background:linear-gradient(var(--gold), transparent);
+    opacity:.7;
+  }
+  .t-item{
+    position:relative;
+    text-align:left;
+    background:var(--card);
+    border-radius:12px;
+    padding:16px 18px;
+    margin-bottom:22px;
+    box-shadow:0 10px 26px rgba(0,0,0,.35);
+  }
+  .t-item::before{
+    content:"❤";
+    position:absolute;
+    left:-31px; top:16px;
+    width:20px; height:20px;
+    color:var(--rose);
+    font-size:14px;
+    background:var(--card);
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 0 0 3px rgba(216,178,106,.35);
+  }
+  .t-date{
+    font-family:'Poppins',sans-serif;
+    font-size:11px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--rose);
+    font-weight:600;
+    margin-bottom:4px;
+  }
+  .t-text{
+    font-family:'Poppins',sans-serif;
+    font-size:14.5px;
+    line-height:1.55;
+    color:#2b2020;
+  }
+  .t-text .hl{
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    font-weight:600;
+  }
+  .closing{
+    max-width:520px;
+    margin:0 auto 70px auto;
+    padding:22px;
+    border-radius:14px;
+    background:rgba(255,255,255,.07);
+    color:var(--text-cream);
+  }
+  .closing p{
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    font-size:15px;
+    line-height:1.7;
+    margin:0;
+  }
+  .closing .sign{
+    margin-top:14px;
+    font-family:'Dancing Script',cursive;
+    font-size:24px;
+  }
+
+  @media (min-width:640px){
+    .menu-row{ display:flex; gap:10px; }
+  }
+
+  /* ---------- background music toggle ---------- */
+  .music-toggle{
+    position:fixed;
+    left:16px;
+    bottom:calc(16px + env(safe-area-inset-bottom,0px));
+    z-index:30;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    background:rgba(0,0,0,.45);
+    backdrop-filter:blur(4px);
+    border:1px solid rgba(216,178,106,.5);
+    color:var(--text-cream);
+    padding:8px 14px 8px 8px;
+    border-radius:999px;
+    cursor:pointer;
+    font-family:'Poppins',sans-serif;
+    font-size:12px;
+    letter-spacing:.5px;
+    box-shadow:0 8px 20px rgba(0,0,0,.4);
+    transition:background .2s ease;
+  }
+  .music-toggle:hover{ background:rgba(0,0,0,.6); }
+  .disc{
+    width:26px;height:26px;
+    border-radius:50%;
+    background:radial-gradient(circle at 50% 50%, #1a1a1a 30%, var(--rose) 32%, #1a1a1a 34%, #1a1a1a 100%);
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;
+    flex-shrink:0;
+  }
+  .disc.spinning{
+    animation:spin 3s linear infinite;
+  }
+  @keyframes spin{
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
+  }
+  .music-frame-holder{
+    position:fixed;
+    width:1px;height:1px;
+    overflow:hidden;
+    opacity:0;
+    pointer-events:none;
+    bottom:0; left:0;
+  }
+
+  /* ---------- PAGE 4 : moments/video ---------- */
+  #page4{
+    justify-content:flex-start;
+    padding-top:calc(90px + env(safe-area-inset-top,0px));
+  }
+  .video-frame{
+    width:min(92vw,640px);
+    aspect-ratio:16/9;
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 20px 50px rgba(0,0,0,.55);
+    border:3px solid var(--gold);
+    background:#0d0d0d;
+  }
+  .video-placeholder{
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    background:radial-gradient(circle at 50% 40%, #2a0505, #100000 75%);
+    color:var(--text-cream);
+  }
+  .play-btn{
+    width:58px;height:58px;
+    border-radius:50%;
+    background:var(--rose);
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;
+    box-shadow:0 6px 18px rgba(0,0,0,.5);
+  }
+  .placeholder-text{
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    font-size:15px;
+    line-height:1.5;
+    opacity:.9;
+  }
+  .placeholder-text span{
+    font-family:'Poppins',sans-serif;
+    font-style:normal;
+    font-size:11px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    opacity:.7;
+  }
+  .polaroid-gallery{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:18px 14px;
+    max-width:640px;
+    margin:34px auto 60px auto;
+    padding:0 10px;
+  }
+  .polaroid{
+    background:var(--card);
+    padding:8px 8px 14px 8px;
+    border-radius:4px;
+    box-shadow:0 12px 24px rgba(0,0,0,.45);
+    width:118px;
+    transition:transform .25s ease;
+  }
+  .polaroid:hover{ transform:translateY(-6px) scale(1.04); }
+  .polaroid img{
+    width:100%;
+    height:140px;
+    object-fit:cover;
+    border-radius:2px;
+    display:block;
+  }
+  .p1{ transform:rotate(-6deg); }
+  .p2{ transform:rotate(4deg); }
+  .p3{ transform:rotate(-3deg); }
+  .p4{ transform:rotate(7deg); }
+  .p5{ transform:rotate(-8deg); }
+  .p1:hover{ transform:rotate(-6deg) translateY(-6px) scale(1.04); }
+  .p2:hover{ transform:rotate(4deg) translateY(-6px) scale(1.04); }
+  .p3:hover{ transform:rotate(-3deg) translateY(-6px) scale(1.04); }
+  .p4:hover{ transform:rotate(7deg) translateY(-6px) scale(1.04); }
+  .p5:hover{ transform:rotate(-8deg) translateY(-6px) scale(1.04); }
+  @media (max-width:420px){
+    .polaroid{ width:96px; }
+    .polaroid img{ height:112px; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- background music (Sting - Shape of My Heart, official YouTube video, audio only) -->
+  <div id="musicToggle" class="music-toggle" onclick="toggleMusic()">
+    <div class="disc" id="discIcon">🎵</div>
+    <span id="musicLabel">Play Musik</span>
+  </div>
+  <div id="musicFrameHolder" class="music-frame-holder"></div>
+
+  <!-- animated hearts & flowers injected by JS -->
+
+  <!-- PAGE 1 -->
+  <section class="page active" id="page1">
+    <div class="envelope-wrap" onclick="goTo(2)">
+      <div class="envelope">
+        <div class="envelope-body"></div>
+        <div class="envelope-flap"></div>
+        <div class="wax-seal">💌</div>
+      </div>
+      <h1 class="title">A little something<br>for you, Tiramisuuu</h1>
+      <div class="tap-text">TAP FOR SURPRISE</div>
+    </div>
+  </section>
+
+  <!-- PAGE 2 -->
+  <section class="page" id="page2">
+    <div class="choose-title">Choose the Surprise</div>
+    <div class="menu-row">
+      <div class="menu-option" onclick="goTo(3)">
+        <div class="menu-icon">⏳</div>
+        <div class="menu-label">Journey</div>
+      </div>
+      <div class="menu-option" onclick="goTo(4)">
+        <div class="menu-icon">🎬</div>
+        <div class="menu-label">Moments</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 3 -->
+  <section class="page" id="page3">
+    <button class="back-btn" onclick="goTo(2)">BACK ◂</button>
+    <div class="name-script">Tiramisuuu</div>
+    <div class="subhead">Our little journey</div>
+
+    <div class="timeline" id="timelineList">
+      <!-- items injected / editable below -->
+    </div>
+
+    <div class="closing">
+      <p>Nggak ada alasan khusus buat hari ini — cuma tiba-tiba pengen bikin sesuatu yang random buat kamu. Makasih udah jadi bagian dari cerita yang selalu bikin hari jadi lebih berwarna. Semoga senyum kamu abis baca ini bertahan lama ya 🤍</p>
+      <div class="sign">— untuk Tiramisuuu</div>
+    </div>
+  </section>
+
+  <!-- PAGE 4 : Moments (video) -->
+  <section class="page" id="page4">
+    <button class="back-btn" onclick="goTo(2)">BACK ◂</button>
+    <div class="name-script">Moments</div>
+    <div class="subhead">Sedikit momen kita</div>
+
+    <div class="video-frame" id="videoFrame">
+      <video controls playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;background:#000;">
+        <source src="assets/video/moments.mp4" type="video/mp4">
+      </video>
+    </div>
+
+    <div class="polaroid-gallery">
+      <div class="polaroid p1"><img src="assets/img/moment-1.jpg" alt="moment 1"></div>
+      <div class="polaroid p2"><img src="assets/img/moment-2.jpg" alt="moment 2"></div>
+      <div class="polaroid p3"><img src="assets/img/moment-3.jpg" alt="moment 3"></div>
+      <div class="polaroid p4"><img src="assets/img/moment-4.jpg" alt="moment 4"></div>
+      <div class="polaroid p5"><img src="assets/img/moment-5.jpg" alt="moment 5"></div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // ---------- background music (Shape of My Heart - Sting) ----------
+  let musicPlaying = false;
+  const YT_ID = 'NlwIDxCjL-8';
+  let ytTabRef = null;
+  function toggleMusic(){
+    const disc = document.getElementById('discIcon');
+    const label = document.getElementById('musicLabel');
+    if(!musicPlaying){
+      ytTabRef = window.open(`https://www.youtube.com/watch?v=${YT_ID}&autoplay=1`, '_blank');
+      disc.classList.add('spinning');
+      label.textContent = 'Now Playing ↗';
+      musicPlaying = true;
+    }else{
+      if(ytTabRef && !ytTabRef.closed){ ytTabRef.close(); }
+      disc.classList.remove('spinning');
+      label.textContent = 'Play Musik';
+      musicPlaying = false;
+    }
+  }
+
+  // ---------- page navigation ----------
+  function goTo(n){
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page'+n).classList.add('active');
+  }
+
+  // ---------- floating hearts & flower petals ----------
+  const stage = document.getElementById('stage');
+  const symbols = ['❤️','💕','🌸','🌹','🤍','💗'];
+  const FX_COUNT = 18;
+
+  for(let i=0;i<FX_COUNT;i++){
+    const el = document.createElement('div');
+    el.className = 'fx';
+    el.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    const size = 14 + Math.random()*20;
+    el.style.fontSize = size+'px';
+    el.style.left = Math.random()*100+'vw';
+    const duration = 9 + Math.random()*10;
+    el.style.animationDuration = duration+'s';
+    el.style.animationDelay = (Math.random()*duration)+'s';
+    el.style.setProperty('--drift-x', (Math.random()*80-40)+'px');
+    stage.appendChild(el);
+  }
+
+  // ---------- EDIT YOUR TIMELINE HERE ----------
+  // Ganti "date" dan "text" sesuai cerita kalian. Boleh tambah/kurangi item.
+  const timelineData = [
+    { date: "Someday", text: "Awal cerita kita dimulai dari hal random yang nggak disangka-sangka — dan ternyata itu jadi salah satu keputusan terbaik." },
+    { date: "Along the way", text: "Banyak hal receh sampai serius yang kita lewatin bareng, dan setiap satu momennya <span class='hl'>selalu berharga</span>." },
+    { date: "Lately", text: "Hari-hari biasa jadi kerasa spesial cuma karena ada kamu di dalamnya." },
+    { date: "Right now", text: "Dan di sinilah kita — masih saling jaga, masih saling temenin, masih sama-sama." }
+  ];
+
+  const list = document.getElementById('timelineList');
+  timelineData.forEach(item=>{
+    const div = document.createElement('div');
+    div.className = 't-item';
+    div.innerHTML = `<div class="t-date">${item.date}</div><div class="t-text">${item.text}</div>`;
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>
